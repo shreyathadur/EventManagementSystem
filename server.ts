@@ -8,8 +8,8 @@ import { GoogleGenAI } from '@google/genai';
 import crypto from 'crypto';
 import Stripe from 'stripe';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _filename = typeof __filename !== 'undefined' ? __filename : fileURLToPath(import.meta.url);
+const _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(_filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,7 +33,7 @@ function getGenAI(): GoogleGenAI | null {
 }
 
 // Path to low-db style file-based persistence
-const dbPath = path.join(__dirname, 'db.json');
+const dbPath = path.join(_dirname, 'db.json');
 
 // Interface structures
 interface Event {
