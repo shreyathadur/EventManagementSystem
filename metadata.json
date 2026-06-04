@@ -1,0 +1,6 @@
+{
+  "name": "Event Management System",
+  "description": "An elegant, production-grade event registration, scheduling, tracking, and resource management dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

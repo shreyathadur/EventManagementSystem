@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-page: #fafafc;
+    --bg-card: #ffffff;
+    --border-card: rgba(228, 228, 231, 0.6);
+    --text-primary: #18181b;
+    --text-secondary: #71717a;
+    --bg-input: #f4f4f5;
+    --border-input: #e4e4e7;
+    --text-input: #3f3f46;
+  }
+
+  html.dark {
+    --bg-page: #09090b;
+    --bg-card: #141416;
+    --border-card: #27272a;
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --bg-input: #1e1e21;
+    --border-input: #2d2d30;
+    --text-input: #e4e4e7;
+  }
+
+  /* Smooth transition for theme colors */
+  body, .min-h-screen, nav, div, section, card, button, input, select {
+    transition-property: background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200s; /* Standard transition speed, handled manually where needed */
+  }
+
+  /* Reset transitions to avoid lagging animations */
+  body, .min-h-screen, nav, .bg-white, input, select {
+    transition-duration: 200ms !important;
+  }
+
+  /* Global dark background overrides */
+  html.dark body {
+    background-color: #09090b !important;
+    color: #f4f4f5 !important;
+  }
+
+  html.dark #main-root-container {
+    background-color: #09090b !important;
+  }
+
+  /* Force Cards & Containers to Dark Zinc-900 */
+  html.dark .bg-white {
+    background-color: #141416 !important;
+  }
+
+  /* Border Adjustments */
+  html.dark .border-zinc-200,
+  html.dark .border-zinc-200\/60,
+  html.dark .border-zinc-200\/50,
+  html.dark .border-zinc-100 {
+    border-color: #27272a !important;
+  }
+
+  /* Header Section borders */
+  html.dark border-zinc-100 {
+    border-color: #27272a !important;
+  }
+
+  /* KPI card progress bars backings */
+  html.dark .bg-zinc-100,
+  html.dark .bg-zinc-100\/80,
+  html.dark .bg-zinc-50 {
+    background-color: #1e1e21 !important;
+  }
+
+  /* Inputs, selects, buttons fields */
+  html.dark select,
+  html.dark input {
+    background-color: #1e1e21 !important;
+    color: #f4f4f5 !important;
+    border-color: #2d2d30 !important;
+  }
+
+  html.dark select option {
+    background-color: #141416 !important;
+    color: #f4f4f5 !important;
+  }
+
+  /* Theme Text Colors */
+  html.dark .text-zinc-900,
+  html.dark .text-zinc-800 {
+    color: #f4f4f5 !important;
+  }
+
+  html.dark .text-zinc-700,
+  html.dark .text-zinc-650,
+  html.dark .text-zinc-600 {
+    color: #d4d4d8 !important;
+  }
+
+  html.dark .text-zinc-500,
+  html.dark .text-zinc-400 {
+    color: #a1a1aa !important;
+  }
+
+  /* Quick Stats background metrics */
+  html.dark .text-zinc-400.block.tracking-widest {
+    color: #71717a !important;
+  }
+
+  /* Custom overrides for light badges */
+  html.dark .bg-emerald-50,
+  html.dark .bg-emerald-50\/80 {
+    background-color: rgba(6, 78, 59, 0.3) !important;
+    color: #34d399 !important;
+    border-color: rgba(16, 185, 129, 0.2) !important;
+  }
+
+  html.dark .bg-rose-50,
+  html.dark .bg-rose-50\/80 {
+    background-color: rgba(159, 18, 57, 0.25) !important;
+    color: #f43f5e !important;
+    border-color: rgba(244, 63, 94, 0.2) !important;
+  }
+
+  html.dark .bg-blue-50,
+  html.dark .bg-blue-50\/80 {
+    background-color: rgba(30, 58, 138, 0.3) !important;
+    color: #60a5fa !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+  }
+
+  html.dark .bg-amber-50,
+  html.dark .bg-amber-50\/80 {
+    background-color: rgba(120, 53, 4, 0.3) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+  }
+
+  /* Table highlights */
+  html.dark tr:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  html.dark th {
+    background-color: #1a1a1d !important;
+    color: #a1a1aa !important;
+    border-top: 1px solid #27272a !important;
+    border-bottom: 1px solid #27272a !important;
+  }
+
+  /* Date preset highlights and components */
+  html.dark #custom-date-range-inputs {
+    background-color: #1e1e21 !important;
+    border-color: #2d2d30 !important;
+  }
+
+  html.dark #custom-start-date,
+  html.dark #custom-end-date {
+    color: #f4f4f5 !important;
+  }
+
+  /* Performance Hub labels */
+  html.dark .recharts-text {
+    fill: #a1a1aa !important;
+  }
+}

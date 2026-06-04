@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Spring Boot Java Backend Application
+  backend-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: event-backend-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/eventdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres_secure_pass123
+      - CLOUD_STAGE=production
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - event-network
+    restart: always
+
+  # PostgreSQL Relational Database Service
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=eventdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_secure_pass123
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 8s
+      timeout: 5s
+      retries: 5
+    networks:
+      - event-network
+    restart: always
+
+networks:
+  event-network:
+    driver: bridge
+
+volumes:
+  pg-data-volume:
+    driver: local
