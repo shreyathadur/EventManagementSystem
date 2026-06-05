@@ -1,0 +1,8 @@
+com\eventmgmt\model\Event.class
+com\eventmgmt\model\Event$EventBuilder.class
+com\eventmgmt\model\VerificationToken$VerificationTokenBuilder.class
+com\eventmgmt\model\EventStatus.class
+com\eventmgmt\model\VerificationToken.class
+com\eventmgmt\model\Role.class
+com\eventmgmt\model\User.class
+com\eventmgmt\model\User$UserBuilder.class
