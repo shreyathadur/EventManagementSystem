@@ -2,10 +2,10 @@ package com.eventmgmt.config;
 
 import com.eventmgmt.repository.UserRepository;
 import com.eventmgmt.security.JwtAuthenticationFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -31,14 +31,18 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserRepository userRepository;
 
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost:3001}")
     private String allowedOrigins;
+
+    public SecurityConfig(@Lazy JwtAuthenticationFilter jwtAuthFilter, UserRepository userRepository) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,20 +50,20 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/reviews/event/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/calendar/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/search/similar/**").permitAll()
                 .requestMatchers("/api/auth/verify-email").permitAll()
                 .requestMatchers("/api/auth/resend-verification").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
-                // Organizer-only endpoints
-                .requestMatchers(HttpMethod.POST, "/api/events").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
-                .requestMatchers("/api/events/*/publish").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
-                // Admin-only endpoints
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/ws/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/events").hasAnyAuthority("ROLE_ORGANIZATION", "ROLE_FACULTY", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZATION", "ROLE_FACULTY", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZATION", "ROLE_FACULTY", "ROLE_ADMIN")
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                // Authenticated users for everything else
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

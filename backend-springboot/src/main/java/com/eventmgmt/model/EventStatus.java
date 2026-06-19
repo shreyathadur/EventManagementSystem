@@ -1,8 +1,10 @@
 package com.eventmgmt.model;
 
 public enum EventStatus {
-    DRAFT,
-    PUBLISHED,
-    CANCELLED,
-    ARCHIVED
+    PENDING,
+    APPROVED,
+    ACTIVE,
+    COMPLETED,
+    REJECTED,
+    CANCELED
 }

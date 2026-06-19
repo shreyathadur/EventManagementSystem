@@ -29,29 +29,34 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @NotBlank(message = "First name is required")
-    @Column(name = "first_name")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    @Column(name = "last_name")
-    private String lastName;
+    @NotBlank(message = "Name is required")
+    @Column(nullable = false)
+    private String name;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    @Column(name = "organization_name")
+    private String organizationName;
+
+    private String department;
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
+    @Builder.Default
     private boolean enabled = true;
 
+    @Builder.Default
     private boolean verified = false;
 
     @CreationTimestamp
@@ -73,22 +78,14 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+    public boolean isEnabled() { return enabled; }
 }

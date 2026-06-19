@@ -1,12 +1,51 @@
 services:
-  - type: web
-    name: event-management-system
-    env: node
+  # PostgreSQL Database
+  - type: psql
+    name: ems-postgres
+    region: oregon
     plan: free
-    buildCommand: npm install --include=dev && npm run build
-    startCommand: npm run start
+
+  # Spring Boot Backend
+  - type: web
+    name: ems-backend
+    region: oregon
+    plan: free
+    env: docker
+    dockerfilePath: ./backend-springboot/Dockerfile
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: GEMINI_API_KEY
-        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: ems-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ems-postgres
+          property: port
+      - key: DB_NAME
+        value: university_ems
+      - key: DB_USER
+        fromDatabase:
+          name: ems-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ems-postgres
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SERVER_PORT
+        value: 8080
+
+  # React Frontend
+  - type: web
+    name: ems-frontend
+    region: oregon
+    plan: free
+    env: docker
+    dockerfilePath: ./frontend-react/Dockerfile
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          name: ems-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL

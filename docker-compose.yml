@@ -1,51 +1,52 @@
 version: '3.8'
 
 services:
-  # Spring Boot Java Backend Application
-  backend-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: event-backend-app
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/eventdb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres_secure_pass123
-      - CLOUD_STAGE=production
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-    networks:
-      - event-network
-    restart: always
-
-  # PostgreSQL Relational Database Service
-  postgres-db:
+  postgres:
     image: postgres:15-alpine
-    container_name: postgres-db
-    ports:
-      - "5432:5432"
+    container_name: ems-postgres
     environment:
-      - POSTGRES_DB=eventdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres_secure_pass123
+      POSTGRES_DB: university_ems
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
     volumes:
-      - pg-data-volume:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 8s
+      interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - event-network
-    restart: always
 
-networks:
-  event-network:
-    driver: bridge
+  backend:
+    build:
+      context: ./backend-springboot
+      dockerfile: Dockerfile
+    container_name: ems-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: university_ems
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBqd3QgdG9rZW4gc2lnbmluZw==
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    container_name: ems-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
 
 volumes:
-  pg-data-volume:
-    driver: local
+  postgres_data:

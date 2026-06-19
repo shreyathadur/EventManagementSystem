@@ -39,15 +39,19 @@ public class Registration {
     private Event event;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private RegistrationStatus status = RegistrationStatus.CONFIRMED;
 
     @Column(name = "ticket_type")
+    @Builder.Default
     private String ticketType = "standard"; // standard, vip, early_bird
 
     @Column(name = "amount_paid")
+    @Builder.Default
     private Double amountPaid = 0.0;
 
     @Column(name = "checked_in")
+    @Builder.Default
     private boolean checkedIn = false;
 
     @Column(name = "checked_in_at")

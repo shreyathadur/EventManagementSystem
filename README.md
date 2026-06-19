@@ -1,65 +1,146 @@
-# Event Management System (GatherWise)
+# University Event Management System
 
-A premium, production-ready full-stack event registration, scheduling, tracking, and resource management dashboard. The application is built using React and TypeScript for a polished, responsive user experience, alongside a Node.js (Express) development backend with Vite integration. An enterprise-grade Spring Boot + PostgreSQL backend config is also available for containerized multi-tier deployments.
+A full-stack web application for managing university campus events, built with **Java Spring Boot** (backend) and **React + Vite + Material-UI** (frontend).
 
----
+## Tech Stack
 
-## 🚀 Key Features
+| Layer      | Technology                                      |
+|------------|------------------------------------------------|
+| Backend    | Java 17, Spring Boot 3.2, Spring Security, JWT |
+| ORM        | Hibernate JPA                                   |
+| Database   | PostgreSQL 15+                                  |
+| Frontend   | React 18, TypeScript, Vite, Material-UI v5      |
+| Charts     | Recharts                                        |
+| HTTP       | Axios                                           |
+| Build      | Maven (backend), npm (frontend)                |
+| Containers | Docker, docker-compose                          |
+| Deploy     | Render.com                                      |
 
-* **Interactive Event Registry Workspace**: Explore upcoming panels, workshops, and networking speed events with advanced real-time query filters, categories, and date parameters.
-* **Seat Allocation & Ticket Checkout**: Multi-tier seat reservation workflows (Standard, VIP, and Early Bird) with a customized checkout portal (including Stripe and Razorpay checkout sandbox simulations).
-* **Admission Pass & QR Scanner**: Generate dynamic attendee entry passes with secure check-in QR codes and audit logs at simulated check-in terminals.
-* **Scholastic Certification Engine**: Issue, print, and download elegantly branded Certificates of Attendance for completed events.
-* **Simulated Transactional Outbox**: Visualized outbox logger verifying simulated HTML email alerts (e.g. ticket issuance, check-in validation, feedback notifications).
-* **Optional AI-Assisted Copywriting**: Integrate with Gemini API to optimize event names, construct professional copy descriptions, and tailor organizer tags.
-* **Containerized Spring Boot Option**: Transition to an enterprise relational DB structure using Spring Boot JPA + PostgreSQL, managed via Docker.
+## Features
 
----
+- **Role-Based Access**: Student, Organization, Faculty, Admin
+- **JWT Authentication** with BCrypt password hashing and token refresh
+- **Event CRUD** with filters, pagination, and sorting
+- **Registration System** with auto seat allocation, waitlisting, and QR check-in
+- **Faculty Approval Workflow**: Pending → Approved → Active or Rejected
+- **Venue Management**: CRUD operations for campus venues
+- **Admin Dashboard**: Charts and metrics using Recharts
+- **Global Error Handling** with Spring's `@RestControllerAdvice`
 
-## 🛠️ Technology Stack
+## Project Structure
 
-* **Frontend**: React 19, TypeScript, Tailwind CSS, Lucide React (Icons), Motion (Animations)
-* **Development Server & APIs**: Node.js, Express, tsx (TypeScript Execute), Vite Middleware
-* **Database (Local Simulation)**: Lightweight file-based JSON database (`db.json`)
-* **Enterprise Backend**: Java 17, Spring Boot 3, Spring Data JPA, PostgreSQL, Docker Compose
+```
+EMS/
+├── backend-springboot/        # Spring Boot REST API
+│   ├── src/main/java/com/eventmgmt/
+│   │   ├── config/            # Security config
+│   │   ├── controller/        # REST controllers
+│   │   ├── dto/               # Request/Response DTOs
+│   │   ├── exception/         # Global exception handler
+│   │   ├── model/             # JPA entities
+│   │   ├── repository/        # Spring Data repositories
+│   │   ├── security/          # JWT filter & service
+│   │   └── service/           # Business logic
+│   ├── Dockerfile
+│   └── pom.xml
+├── frontend-react/            # React + Vite frontend
+│   ├── src/
+│   │   ├── components/        # Shared components (Navbar)
+│   │   ├── context/           # Auth context
+│   │   ├── pages/             # Pages and dashboards
+│   │   └── services/          # Axios API services
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.yml         # Local dev orchestration
+└── render.yaml                # Render.com deployment
+```
 
----
+## Quick Start
 
-## 💻 Running the App Locally
+### Using Docker (Recommended)
 
-### Prerequisites
+```bash
+docker-compose up
+# Backend: http://localhost:8080
+# Frontend: http://localhost:3000
+```
 
-Ensure you have [Node.js](https://nodejs.org/) installed.
+### Manual Setup
 
-### Setup Instructions
+#### Prerequisites
+- Java 17+, Maven 3.8+
+- Node.js 18+, npm
+- PostgreSQL 15+
 
-1. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+#### Backend
+```bash
+cd backend-springboot
+# Set environment variables (or use defaults)
+export DB_HOST=localhost DB_PORT=5432 DB_NAME=university_ems DB_USER=postgres DB_PASSWORD=postgres
+./mvnw spring-boot:run
+```
 
-2. **Configure Environment Variables**:
-   Create a `.env.local` file in the root directory (you can copy the structure from `.env.example`):
-   ```bash
-   # Add your optional Gemini API Key to enable AI copywriting features
-   GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-   ```
+#### Frontend
+```bash
+cd frontend-react
+npm install
+npm run dev
+```
 
-3. **Start the Development Server**:
-   ```bash
-   npm run dev
-   ```
-   *The application will boot up on both the Vite dev interface and Express backend API router at **[http://localhost:3000](http://localhost:3000)**.*
+## API Endpoints
 
----
+### Auth
+| Method | Endpoint             | Description     |
+|--------|---------------------|-----------------|
+| POST   | /api/auth/register  | Register user   |
+| POST   | /api/auth/login     | Login user      |
 
-## 🐳 Running the Spring Boot & Postgres Stack (Enterprise Mode)
+### Events
+| Method | Endpoint              | Description           |
+|--------|----------------------|----------------------|
+| GET    | /api/events          | List events (paginated) |
+| GET    | /api/events/{id}     | Get event details     |
+| POST   | /api/events          | Create event          |
+| PUT    | /api/events/{id}     | Update event          |
+| DELETE | /api/events/{id}     | Delete event          |
+| GET    | /api/events/my-events| Get organizer's events|
 
-To deploy the containerized database and Java Spring Boot REST services:
+### Registrations
+| Method | Endpoint                          | Description         |
+|--------|----------------------------------|---------------------|
+| POST   | /api/registrations/register      | Register for event  |
+| GET    | /api/registrations/user          | My registrations    |
+| DELETE | /api/registrations/cancel/{id}   | Cancel registration |
+| GET    | /api/registrations/event/{id}    | Event registrations |
+| POST   | /api/registrations/checkin       | Check-in user       |
 
-1. Ensure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is running.
-2. Build and launch the containers:
-   ```bash
-   docker-compose up --build
-   ```
-   *This starts the PostgreSQL database on port `5432` and the Spring Boot backend service on port `8080`.*
+### Approvals
+| Method | Endpoint                        | Description        |
+|--------|---------------------------------|-------------------|
+| POST   | /api/approvals/request          | Request approval   |
+| GET    | /api/approvals/pending          | Pending approvals  |
+| PUT    | /api/approvals/{id}/approve     | Approve event      |
+| PUT    | /api/approvals/{id}/reject      | Reject event       |
+
+### Dashboard
+| Method | Endpoint    | Description         |
+|--------|------------|---------------------|
+| GET    | /api/stats | Dashboard statistics |
+
+## Environment Variables
+
+| Variable      | Default                    | Description          |
+|--------------|---------------------------|---------------------|
+| DB_HOST      | localhost                  | PostgreSQL host      |
+| DB_PORT      | 5432                       | PostgreSQL port      |
+| DB_NAME      | university_ems             | Database name        |
+| DB_USER      | postgres                   | Database user        |
+| DB_PASSWORD  | postgres                   | Database password    |
+| JWT_SECRET   | (auto-generated)           | JWT signing key      |
+| SERVER_PORT  | 8080                       | Backend server port  |
+
+## Deployment (Render.com)
+
+1. Push your code to GitHub
+2. Connect to Render and use the `render.yaml` manifest
+3. Render will automatically provision PostgreSQL, build and deploy both services
