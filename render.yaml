@@ -1,15 +1,13 @@
 # Render.com Deployment Configuration
 # University Event Management System
+#
+# NOTE: PostgreSQL must be created manually in Render Dashboard:
+#   1. Go to Render Dashboard → New → PostgreSQL
+#   2. Name: ems-postgres, Region: Oregon, Plan: Free
+#   3. Database name: university_ems
+#   4. After creation, copy Host/Port/User/Password into ems-backend env vars
 
 services:
-  # PostgreSQL Database
-  - type: database
-    name: ems-postgres
-    region: oregon
-    plan: free
-    database: postgres
-    version: "15"
-
   # Spring Boot Backend
   - type: web
     name: ems-backend
@@ -17,32 +15,29 @@ services:
     plan: free
     env: docker
     dockerfilePath: ./backend-springboot/Dockerfile
-    healthCheckPath: /api/auth/login
+    healthCheckPath: /actuator/health
     envVars:
       - key: DB_HOST
-        fromDatabase:
-          name: ems-postgres
-          property: host
+        sync: false  # Set manually after creating PostgreSQL in Render Dashboard
       - key: DB_PORT
-        fromDatabase:
-          name: ems-postgres
-          property: port
+        value: "5432"
       - key: DB_NAME
         value: university_ems
       - key: DB_USER
-        fromDatabase:
-          name: ems-postgres
-          property: user
+        sync: false  # Set manually from Render PostgreSQL credentials
       - key: DB_PASSWORD
-        fromDatabase:
-          name: ems-postgres
-          property: password
+        sync: false  # Set manually from Render PostgreSQL credentials
       - key: JWT_SECRET
         generateValue: true
       - key: SERVER_PORT
-        value: 8080
+        value: "8080"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      - key: FRONTEND_URL
+        fromService:
+          name: ems-frontend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
 
   # React Frontend
   - type: web
@@ -52,7 +47,7 @@ services:
     env: docker
     dockerfilePath: ./frontend-react/Dockerfile
     envVars:
-      - key: API_BASE_URL
+      - key: VITE_API_URL
         fromService:
           name: ems-backend
           type: web
