@@ -1,11 +1,10 @@
 # Render.com Deployment Configuration
 # University Event Management System
 #
-# NOTE: PostgreSQL must be created manually in Render Dashboard:
-#   1. Go to Render Dashboard → New → PostgreSQL
-#   2. Name: ems-postgres, Region: Oregon, Plan: Free
-#   3. Database name: university_ems
-#   4. After creation, copy Host/Port/User/Password into ems-backend env vars
+# SETUP: Create PostgreSQL manually in Render Dashboard first:
+#   1. Dashboard → New → PostgreSQL → Name: ems-postgres, Region: Oregon, Free
+#   2. Copy the Internal Database URL
+#   3. Set DATABASE_URL env var in ems-backend service
 
 services:
   # Spring Boot Backend
@@ -15,29 +14,17 @@ services:
     plan: free
     env: docker
     dockerfilePath: ./backend-springboot/Dockerfile
+    dockerContext: ./backend-springboot
     healthCheckPath: /actuator/health
     envVars:
-      - key: DB_HOST
-        sync: false  # Set manually after creating PostgreSQL in Render Dashboard
-      - key: DB_PORT
-        value: "5432"
-      - key: DB_NAME
-        value: university_ems
-      - key: DB_USER
-        sync: false  # Set manually from Render PostgreSQL credentials
-      - key: DB_PASSWORD
-        sync: false  # Set manually from Render PostgreSQL credentials
+      - key: DATABASE_URL
+        value: "placeholder-create-postgres-in-dashboard-first"
       - key: JWT_SECRET
         generateValue: true
       - key: SERVER_PORT
         value: "8080"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: FRONTEND_URL
-        fromService:
-          name: ems-frontend
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
 
   # React Frontend
   - type: web
@@ -46,6 +33,7 @@ services:
     plan: free
     env: docker
     dockerfilePath: ./frontend-react/Dockerfile
+    dockerContext: ./frontend-react
     envVars:
       - key: VITE_API_URL
         fromService:

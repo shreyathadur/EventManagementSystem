@@ -8,8 +8,8 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
-# Make wrapper executable
-RUN chmod +x mvnw
+# Make wrapper executable and fix line endings
+RUN chmod +x mvnw && sed -i 's/\r$//' mvnw
 
 # Download dependencies (cached layer)
 RUN ./mvnw dependency:go-offline -B
@@ -20,20 +20,16 @@ COPY src ./src
 # Build the application
 RUN ./mvnw clean package -DskipTests -B
 
-# Stage 2: Run
+# Stage 2: Run (smaller image)
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
 # Copy the built JAR
-COPY --from=builder /app/target/event-management-system-1.0.0.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
-
 # Run with prod profile
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
