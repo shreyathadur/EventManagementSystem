@@ -1,13 +1,13 @@
 # Render.com Deployment Configuration
 # University Event Management System
 #
-# SETUP: Create PostgreSQL manually in Render Dashboard first:
+# SETUP: Create PostgreSQL manually in Render Dashboard:
 #   1. Dashboard → New → PostgreSQL → Name: ems-postgres, Region: Oregon, Free
-#   2. Copy the "Internal Database URL" from the PostgreSQL info page
-#   3. Set DATABASE_URL env var in ems-backend service settings
+#   2. After creation, go to ems-backend → Environment
+#   3. Set DB_HOST, DB_PORT, DB_USER, DB_PASSWORD from your PostgreSQL info page
 
 services:
-  # Spring Boot Backend (Native Java — no Docker)
+  # Spring Boot Backend
   - type: web
     name: ems-backend
     region: oregon
@@ -17,23 +17,29 @@ services:
     startCommand: cd backend-springboot && java -Dserver.port=$PORT -Dspring.profiles.active=prod -jar target/event-management-system-1.0.0.jar
     healthCheckPath: /actuator/health
     envVars:
-      - key: DATABASE_URL
-        value: "set-this-to-your-render-postgres-internal-url"
+      - key: DB_HOST
+        value: "SET_FROM_RENDER_POSTGRES_INFO"
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: "university_ems"
+      - key: DB_USER
+        value: "SET_FROM_RENDER_POSTGRES_INFO"
+      - key: DB_PASSWORD
+        value: "SET_FROM_RENDER_POSTGRES_INFO"
       - key: JWT_SECRET
         generateValue: true
-      - key: SERVER_PORT
-        value: "8080"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
 
-  # React Frontend (Native Node.js — no Docker)
+  # React Frontend
   - type: web
     name: ems-frontend
     region: oregon
     plan: free
     runtime: node
     buildCommand: cd frontend-react && npm ci && npm run build
-    startCommand: cd frontend-react && npx serve -s dist -l 8080
+    startCommand: cd frontend-react && npx serve -s dist -l $PORT
     envVars:
       - key: VITE_API_URL
         fromService:
