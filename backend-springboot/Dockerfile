@@ -1,4 +1,5 @@
-FROM openjdk:17-jdk-slim
+# Stage 1: Build
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
@@ -10,15 +11,29 @@ COPY .mvn .mvn
 # Make wrapper executable
 RUN chmod +x mvnw
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline
+# Download dependencies (cached layer)
+RUN ./mvnw dependency:go-offline -B
 
 # Copy source code
 COPY src ./src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests -B
 
-# Run the application
+# Stage 2: Run
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Copy the built JAR
+COPY --from=builder /app/target/event-management-system-1.0.0.jar app.jar
+
+# Expose port
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "target/event-management-system-1.0.0.jar"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
+
+# Run with prod profile
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]

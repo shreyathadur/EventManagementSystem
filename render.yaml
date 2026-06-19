@@ -1,9 +1,14 @@
+# Render.com Deployment Configuration
+# University Event Management System
+
 services:
   # PostgreSQL Database
-  - type: psql
+  - type: database
     name: ems-postgres
     region: oregon
     plan: free
+    database: postgres
+    version: "15"
 
   # Spring Boot Backend
   - type: web
@@ -12,6 +17,7 @@ services:
     plan: free
     env: docker
     dockerfilePath: ./backend-springboot/Dockerfile
+    healthCheckPath: /api/auth/login
     envVars:
       - key: DB_HOST
         fromDatabase:
@@ -35,6 +41,8 @@ services:
         generateValue: true
       - key: SERVER_PORT
         value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
 
   # React Frontend
   - type: web
