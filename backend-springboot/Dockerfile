@@ -32,4 +32,4 @@ COPY --from=builder /app/target/event-management-system-1.0.0.jar app.jar
 EXPOSE 8080
 
 # Run with prod profile and optimize for Render and Alpine
-ENTRYPOINT ["sh", "-c", "exec java -Dserver.port=${PORT:8080} -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=prod -jar app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
