@@ -26,10 +26,10 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copy the built JAR
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/event-management-system-1.0.0.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
-# Run with prod profile
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run with prod profile and optimize for Render and Alpine
+ENTRYPOINT ["sh", "-c", "exec java -Dserver.port=${PORT:8080} -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=prod -jar app.jar"]

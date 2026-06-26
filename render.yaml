@@ -7,9 +7,9 @@ services:
     name: ems-backend
     region: oregon
     plan: free
-    runtime: java
-    buildCommand: cd backend-springboot && chmod +x mvnw && ./mvnw clean package -DskipTests -B
-    startCommand: cd backend-springboot && java -Dserver.port=$PORT -Dspring.profiles.active=prod -jar target/event-management-system-1.0.0.jar
+    env: docker
+    dockerContext: backend-springboot
+    dockerfilePath: backend-springboot/Dockerfile
     healthCheckPath: /actuator/health
     envVars:
       - key: DB_HOST
