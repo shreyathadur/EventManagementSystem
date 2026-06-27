@@ -9,3 +9,6 @@ coverage/
 db.json
 
 /src/generated/prisma
+
+# Spring Boot build artifacts
+backend-springboot/target/
