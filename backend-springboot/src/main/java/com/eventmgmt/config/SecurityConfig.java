@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/verify-email").permitAll()
                 .requestMatchers("/api/auth/resend-verification").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/events").hasAnyAuthority("ROLE_ORGANIZATION", "ROLE_FACULTY", "ROLE_ADMIN")
@@ -76,7 +77,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("https://*.onrender.com", "http://localhost:5173", "http://localhost:3000", "http://localhost:3001"));
+        List<String> origins = List.of(allowedOrigins.split(","));
+        config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         config.setAllowCredentials(true);

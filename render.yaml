@@ -1,5 +1,5 @@
 # Render.com Deployment Configuration
-# University Event Management System
+# University Event Management System (Render-Only Architecture)
 
 services:
   # Spring Boot Backend
@@ -10,7 +10,7 @@ services:
     env: docker
     dockerContext: backend-springboot
     dockerfilePath: backend-springboot/Dockerfile
-    healthCheckPath: /actuator/health
+    healthCheckPath: /api/health
     envVars:
       - key: DB_HOST
         fromDatabase:
@@ -36,6 +36,11 @@ services:
         generateValue: true
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      - key: FRONTEND_URL
+        fromService:
+          name: ems-frontend
+          type: static
+          envVarKey: RENDER_EXTERNAL_URL
 
   # React Frontend
   - type: static

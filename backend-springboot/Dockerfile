@@ -31,5 +31,15 @@ COPY --from=builder /app/target/event-management-system-1.0.0.jar app.jar
 # Expose port
 EXPOSE 8080
 
-# Run with prod profile and optimize for Render and Alpine
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+# Run with prod profile and tune JVM for Render Free Tier (512MB container)
+# -XX:+UseContainerSupport  → JVM reads cgroup limits instead of host RAM
+# -XX:MaxRAMPercentage=75.0 → cap heap at 75% of container limit (~384MB)
+# -XX:+UseSerialGC          → lighter GC, better for single-vCPU small containers
+ENTRYPOINT ["java", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "-Dspring.profiles.active=prod", \
+  "-XX:+UseContainerSupport", \
+  "-XX:MaxRAMPercentage=75.0", \
+  "-XX:InitialRAMPercentage=50.0", \
+  "-XX:+UseSerialGC", \
+  "-jar", "app.jar"]
