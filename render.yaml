@@ -41,7 +41,7 @@ services:
 
   # React Frontend
   - type: web
-    name: ems-frontend
+    name: ems-web-frontend
     runtime: static
     buildCommand: cd frontend-react && npm ci && npm run build
     staticPublishPath: frontend-react/dist
