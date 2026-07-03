@@ -28,9 +28,11 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="sticky" elevation={0} className="glass-panel" sx={{
-      background: 'rgba(15, 23, 42, 0.75)',
-      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    <AppBar position="sticky" elevation={mode === 'light' ? 1 : 0} sx={{
+      background: mode === 'light' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.9)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: mode === 'light' ? '1px solid rgba(0, 0, 0, 0.05)' : '1px solid rgba(255, 255, 255, 0.1)',
+      color: mode === 'light' ? 'text.primary' : 'white'
     }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>

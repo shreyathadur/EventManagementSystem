@@ -1,20 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { CssBaseline, Snackbar, Alert } from '@mui/material';
 import { ThemeContextProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './i18n';
 import Navbar from './components/Navbar';
-import LandingPage from './pages/LandingPage';
+import LandingPage from './pages/public/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import EventsPage from './pages/EventsPage';
-import EventDetailPage from './pages/EventDetailPage';
+import EventsPage from './pages/events/EventsPage';
+import EventDetailPage from './pages/events/EventDetailPage';
 import StudentDashboard from './pages/dashboards/StudentDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
 import OrganizerDashboard from './pages/dashboards/OrganizerDashboard';
-import CreateEventPage from './pages/CreateEventPage';
-import ProfilePage from './pages/ProfilePage';
+import CreateEventPage from './pages/events/CreateEventPage';
+import ProfilePage from './pages/profile/ProfilePage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ children, roles }) => {
   const { isAuthenticated, user } = useAuth();
@@ -36,7 +35,6 @@ const DashboardRouter: React.FC = () => {
 function App() {
   return (
     <ThemeContextProvider>
-      <CssBaseline />
       <AuthProvider>
         <BrowserRouter>
           <Navbar />

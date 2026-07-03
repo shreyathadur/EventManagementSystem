@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { 
+  Box, 
+  Paper, 
+  Typography, 
+  TextField, 
+  Button, 
+  InputAdornment, 
+  IconButton, 
+  Alert, 
+  Container 
+} from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -24,92 +35,115 @@ const LoginPage: React.FC = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      if (err.message === 'Network Error' || !err.response) {
+        setError('Unable to connect to the server. Please ensure the backend database is running.');
+      } else {
+        setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 animate-fade-up">
-      <div className="glass-card w-full max-w-md p-10">
-        {/* Logo & Title */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
-            style={{ background: 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))' }}>
-            <SchoolIcon sx={{ fontSize: 32, color: 'white' }} />
-          </div>
-          <h1 className="text-3xl font-bold text-gradient mb-2">Welcome Back</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Sign in to your university portal</p>
-        </div>
+    <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh', py: 4 }}>
+      <Paper elevation={3} sx={{ p: { xs: 4, md: 6 }, borderRadius: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box 
+          sx={{ 
+            bgcolor: 'primary.main', 
+            color: 'primary.contrastText',
+            p: 2, 
+            borderRadius: 2, 
+            mb: 3 
+          }}
+        >
+          <SchoolIcon fontSize="large" />
+        </Box>
+        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+          Welcome Back
+        </Typography>
+        <Typography variant="body1" color="text.secondary" mb={4}>
+          Sign in to your university portal
+        </Typography>
 
         {error && (
-          <div className="mb-6 p-4 rounded-lg text-sm font-medium" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171' }}>
+          <Alert severity="error" sx={{ width: '100%', mb: 3, borderRadius: 2 }}>
             {error}
-          </div>
+          </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>University Email</label>
-            <div className="relative">
-              <EmailIcon className="absolute left-4 top-3.5" sx={{ fontSize: 18, color: '#475569' }} />
-              <input
-                type="email"
-                required
-                placeholder="student@university.edu"
-                className="w-full pl-11 pr-4 py-3 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Password</label>
-            <div className="relative">
-              <LockIcon className="absolute left-4 top-3.5" sx={{ fontSize: 18, color: '#475569' }} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                placeholder="Enter your password"
-                className="w-full pl-11 pr-11 py-3 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-              <button type="button" className="absolute right-4 top-3.5 text-slate-400 hover:text-white transition-colors" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white transition-all duration-200 mt-2"
-            style={{
-              background: loading ? 'rgba(79, 70, 229, 0.5)' : 'var(--primary-color)',
-              boxShadow: '0 4px 14px 0 rgba(79, 70, 229, 0.39)',
-              cursor: loading ? 'not-allowed' : 'pointer',
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="University Email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon color="action" />
+                </InputAdornment>
+              ),
             }}
+            sx={{ mb: 3 }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon color="action" />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            sx={{ mb: 4 }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            size="large"
+            disabled={loading}
+            sx={{ py: 1.5, fontSize: '1.1rem' }}
           >
-            {loading ? 'Signing in...' : 'Sign In to Portal'}
-          </button>
-        </form>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </Button>
+        </Box>
 
-        <p className="text-center mt-8 text-sm" style={{ color: 'var(--text-muted)' }}>
+        <Typography variant="body2" color="text.secondary" mt={4}>
           Don't have an account?{' '}
-          <RouterLink to="/register" className="font-semibold" style={{ color: '#818cf8' }}>
+          <RouterLink to="/register" style={{ color: 'inherit', fontWeight: 'bold' }}>
             Register here
           </RouterLink>
-        </p>
-      </div>
-    </div>
+        </Typography>
+      </Paper>
+    </Container>
   );
 };
 
