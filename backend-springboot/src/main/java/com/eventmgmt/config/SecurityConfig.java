@@ -50,17 +50,25 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
+                // ─── Public root endpoints ───────────────────────────────────────
+                .requestMatchers(HttpMethod.GET, "/", "/api", "/api/").permitAll()
+                // ─── Auth (register / login) ─────────────────────────────────────
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/auth/verify-email").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/auth/resend-verification").permitAll()
+                // ─── Public read-only endpoints ───────────────────────────────────
                 .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/reviews/event/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/calendar/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/search/similar/**").permitAll()
-                .requestMatchers("/api/auth/verify-email").permitAll()
-                .requestMatchers("/api/auth/resend-verification").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
+                // ─── Health / Docs / WebSocket ────────────────────────────────────
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/ws/**").permitAll()
+                // ─── CORS preflight ───────────────────────────────────────────────
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // ─── Organizer / Admin write endpoints ────────────────────────────
                 .requestMatchers(HttpMethod.POST, "/api/events").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyAuthority("ROLE_ORGANIZER", "ROLE_ADMIN")
@@ -79,10 +87,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        List<String> origins = List.of(allowedOrigins.split(","));
+
+        // Build the list: always include Render wildcard + any configured origins
+        List<String> origins = new java.util.ArrayList<>(List.of(allowedOrigins.split(",")));
+        // Ensure production Render domains are always allowed
+        if (origins.stream().noneMatch(o -> o.contains("onrender.com"))) {
+            origins.add("https://*.onrender.com");
+        }
+
         config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
