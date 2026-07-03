@@ -37,23 +37,18 @@ services:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: FRONTEND_URL
-        fromService:
-          name: ems-frontend
-          type: static
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false
 
   # React Frontend
-  - type: static
+  - type: web
     name: ems-frontend
     region: oregon
+    runtime: static
     buildCommand: cd frontend-react && npm ci && npm run build
     staticPublishPath: frontend-react/dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: ems-backend
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
+        sync: false
     routes:
       - type: rewrite
         source: /*
