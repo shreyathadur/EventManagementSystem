@@ -9,10 +9,20 @@ export const authService = {
 };
 
 export const approvalService = {
-  getPending: () => api.get('/approvals/pending').then(r => r.data),
-  approve: (id: string, comments?: string) => api.put(`/approvals/${id}/approve`, { comments }).then(r => r.data),
-  reject: (id: string, comments?: string) => api.put(`/approvals/${id}/reject`, { comments }).then(r => r.data),
+  // Admin-only endpoints
+  getPending: () => api.get('/admin/approvals/pending').then(r => r.data),
+  approve: (id: string, comments?: string) => api.put(`/admin/approvals/${id}/approve`, { comments }).then(r => r.data),
+  reject: (id: string, comments?: string) => api.put(`/admin/approvals/${id}/reject`, { comments }).then(r => r.data),
+  // Organizer endpoint
   request: (eventId: string) => api.post('/approvals/request', { eventId }).then(r => r.data),
+};
+
+export const adminService = {
+  getUsers: (page = 0) => api.get(`/admin/users?page=${page}`).then(r => r.data),
+  getOrganizers: () => api.get('/admin/users/organizers').then(r => r.data),
+  deleteUser: (id: string) => api.delete(`/admin/users/${id}`).then(r => r.data),
+  getAnalytics: () => api.get('/admin/analytics').then(r => r.data),
+  getAuditLogs: (page = 0) => api.get(`/admin/audit-logs?page=${page}`).then(r => r.data),
 };
 
 export const venueService = {
@@ -23,3 +33,4 @@ export const venueService = {
 export const statsService = {
   getDashboard: () => api.get('/stats').then(r => r.data),
 };
+

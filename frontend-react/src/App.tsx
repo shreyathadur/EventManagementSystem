@@ -12,7 +12,6 @@ import EventsPage from './pages/EventsPage';
 import EventDetailPage from './pages/EventDetailPage';
 import StudentDashboard from './pages/dashboards/StudentDashboard';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
-import FacultyDashboard from './pages/dashboards/FacultyDashboard';
 import OrganizerDashboard from './pages/dashboards/OrganizerDashboard';
 import CreateEventPage from './pages/CreateEventPage';
 import ProfilePage from './pages/ProfilePage';
@@ -29,8 +28,7 @@ const DashboardRouter: React.FC = () => {
   if (!user) return <Navigate to="/login" />;
   switch (user.role) {
     case 'ROLE_ADMIN': return <AdminDashboard />;
-    case 'ROLE_FACULTY': return <FacultyDashboard />;
-    case 'ROLE_ORGANIZATION': return <OrganizerDashboard />;
+    case 'ROLE_ORGANIZER': return <OrganizerDashboard />;
     default: return <StudentDashboard />;
   }
 };
@@ -51,7 +49,7 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/create-event" element={
-              <ProtectedRoute roles={['ROLE_ORGANIZATION', 'ROLE_FACULTY', 'ROLE_ADMIN']}>
+              <ProtectedRoute roles={['ROLE_ORGANIZER', 'ROLE_ADMIN']}>
                 <CreateEventPage />
               </ProtectedRoute>
             } />

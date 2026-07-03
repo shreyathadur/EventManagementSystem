@@ -28,11 +28,9 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="sticky" sx={{
-      background: mode === 'light'
-        ? 'linear-gradient(135deg, #1a56db 0%, #7c3aed 100%)'
-        : 'linear-gradient(135deg, #1E293B 0%, #334155 100%)',
-      backdropFilter: 'blur(10px)',
+    <AppBar position="sticky" elevation={0} className="glass-panel" sx={{
+      background: 'rgba(15, 23, 42, 0.75)',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
     }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -49,7 +47,7 @@ const Navbar: React.FC = () => {
                 {t('nav.dashboard')}
               </Button>
             )}
-            {isAuthenticated && ['ROLE_ORGANIZATION', 'ROLE_FACULTY', 'ROLE_ADMIN'].includes(user?.role || '') && (
+            {isAuthenticated && ['ROLE_ORGANIZER', 'ROLE_ADMIN'].includes(user?.role || '') && (
               <Button color="inherit" component={RouterLink} to="/create-event" startIcon={<Add />}>
                 {t('nav.createEvent')}
               </Button>

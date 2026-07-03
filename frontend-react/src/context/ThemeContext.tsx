@@ -55,7 +55,7 @@ const getDesignTokens = (mode: PaletteMode) => ({
 
 export const ThemeContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<PaletteMode>(
-    () => (localStorage.getItem('themeMode') as PaletteMode) || 'light'
+    () => (localStorage.getItem('themeMode') as PaletteMode) || 'dark'
   );
 
   useEffect(() => {

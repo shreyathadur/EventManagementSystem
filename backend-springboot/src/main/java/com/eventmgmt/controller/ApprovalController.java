@@ -27,14 +27,14 @@ public class ApprovalController {
     }
 
     @GetMapping("/pending")
-    @PreAuthorize("hasAnyAuthority('ROLE_FACULTY', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Approval>> getPendingApprovals() {
         List<Approval> approvals = approvalService.getPendingApprovals();
         return ResponseEntity.ok(approvals);
     }
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAnyAuthority('ROLE_FACULTY', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Approval> approveEvent(
             @PathVariable String id,
             @RequestBody(required = false) ApprovalRequest request,
@@ -46,7 +46,7 @@ public class ApprovalController {
     }
 
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasAnyAuthority('ROLE_FACULTY', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Approval> rejectEvent(
             @PathVariable String id,
             @RequestBody(required = false) ApprovalRequest request,

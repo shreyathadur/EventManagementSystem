@@ -37,8 +37,8 @@ public class EventService {
         event.setRegistrationDeadline(request.getRegistrationDeadline());
         event.setImageUrl(request.getImageUrl());
 
-        // Faculty/Admin events are auto-approved
-        if (organizer.getRole() == Role.ROLE_FACULTY || organizer.getRole() == Role.ROLE_ADMIN) {
+        // Admin events are auto-approved. Organizers require approval.
+        if (organizer.getRole() == Role.ROLE_ADMIN) {
             event.setStatus(EventStatus.APPROVED);
         } else {
             event.setStatus(EventStatus.PENDING);
