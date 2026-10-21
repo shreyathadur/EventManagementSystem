@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="emsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect width="32" height="32" rx="7" fill="url(#emsGrad)"/>
+  
+  <!-- Calendar Body -->
+  <rect x="6" y="9" width="20" height="17" rx="3" fill="#FFFFFF"/>
+  
+  <!-- Calendar Header Bar -->
+  <path d="M6 12C6 10.3431 7.34315 9 9 9H23C24.6569 9 26 10.3431 26 12V14H6V12Z" fill="#EF4444"/>
+  
+  <!-- Binder Rings -->
+  <rect x="10" y="6" width="2.5" height="4.5" rx="1.25" fill="#FFFFFF"/>
+  <rect x="19.5" y="6" width="2.5" height="4.5" rx="1.25" fill="#FFFFFF"/>
+  
+  <!-- Calendar Event Dots -->
+  <circle cx="10.5" cy="17.5" r="1.5" fill="#4F46E5"/>
+  <circle cx="16" cy="17.5" r="1.5" fill="#4F46E5"/>
+  <circle cx="21.5" cy="17.5" r="1.5" fill="#F59E0B"/>
+  <circle cx="10.5" cy="22" r="1.5" fill="#10B981"/>
+  <circle cx="16" cy="22" r="1.5" fill="#4F46E5"/>
+  <circle cx="21.5" cy="22" r="1.5" fill="#4F46E5"/>
+</svg>
