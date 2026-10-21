@@ -1,5 +1,5 @@
 # Render.com Deployment Configuration
-# University Event Management System (Render-Only Architecture)
+# University Event Management System
 
 services:
   # Spring Boot Backend
@@ -12,26 +12,10 @@ services:
     dockerfilePath: backend-springboot/Dockerfile
     healthCheckPath: /api/health
     envVars:
-      - key: DB_HOST
+      - key: DATABASE_URL
         fromDatabase:
           name: ems-postgres
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: ems-postgres
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: ems-postgres
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: ems-postgres
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: ems-postgres
-          property: password
+          property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: SPRING_PROFILES_ACTIVE
@@ -41,7 +25,19 @@ services:
       - key: FRONTEND_URL
         sync: false
 
-  # React Frontend
+  # React Frontend (Docker Service)
+  - type: web
+    name: ems-frontend
+    region: oregon
+    plan: free
+    env: docker
+    dockerContext: frontend-react
+    dockerfilePath: frontend-react/Dockerfile
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+
+  # React Frontend (Static Site)
   - type: web
     name: ems-web-frontend
     runtime: static

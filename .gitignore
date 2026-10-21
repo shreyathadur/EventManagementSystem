@@ -12,3 +12,6 @@ db.json
 
 # Spring Boot build artifacts
 backend-springboot/target/
+
+# IDE
+.vscode/
