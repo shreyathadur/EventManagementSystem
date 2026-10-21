@@ -1,7 +1,19 @@
 import axios from 'axios';
 
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const API_BASE_URL = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+const getBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return envUrl.trim();
+  }
+  if (import.meta.env.PROD) {
+    return 'https://ems-backend-jisu.onrender.com';
+  }
+  return 'http://localhost:8080';
+};
+
+const rawBaseUrl = getBaseUrl();
+const cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+const API_BASE_URL = cleanBaseUrl.endsWith('/api') ? cleanBaseUrl : `${cleanBaseUrl}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,

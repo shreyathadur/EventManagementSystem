@@ -88,11 +88,18 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Build the list: always include Render wildcard + any configured origins
-        List<String> origins = new java.util.ArrayList<>(List.of(allowedOrigins.split(",")));
-        // Ensure production Render domains are always allowed
-        if (origins.stream().noneMatch(o -> o.contains("onrender.com"))) {
+        List<String> origins = new java.util.ArrayList<>();
+        for (String o : allowedOrigins.split(",")) {
+            String trimmed = o.trim();
+            if (!trimmed.isEmpty() && !origins.contains(trimmed)) {
+                origins.add(trimmed);
+            }
+        }
+        if (!origins.contains("https://*.onrender.com")) {
             origins.add("https://*.onrender.com");
+        }
+        if (!origins.contains("https://ems-frontend-zkqq.onrender.com")) {
+            origins.add("https://ems-frontend-zkqq.onrender.com");
         }
 
         config.setAllowedOriginPatterns(origins);
